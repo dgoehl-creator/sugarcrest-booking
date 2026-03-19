@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Booking Confirmed — SugarCrest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .checkmark-anim {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, #1a5c6b, #2a8a9e);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 2rem;
+      box-shadow: 0 8px 24px rgba(26,92,107,.3);
+      animation: popIn .5s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    .checkmark-anim.family {
+      background: linear-gradient(135deg, #2d1b69, #6b33c4);
+      box-shadow: 0 8px 24px rgba(107,51,196,.3);
+    }
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .add-to-cal-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin: 20px 0; }
+    .cal-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 18px; border-radius: 40px; font-size: .82rem; font-weight: 600;
+      border: 1.5px solid var(--border); color: var(--text);
+      cursor: pointer; background: #fff; transition: all .2s;
+      text-decoration: none;
+    }
+    .cal-btn:hover { border-color: var(--teal); color: var(--teal); transform: translateY(-1px); }
+    .what-next { margin-top: 28px; padding: 24px; background: var(--off-white); border-radius: 12px; text-align: left; }
+    .what-next h4 { font-size: .9rem; color: var(--teal); margin-bottom: 12px; }
+    .what-next li { font-size: .85rem; color: var(--text-muted); margin-bottom: 8px; line-height: 1.5; }
+  </style>
+</head>
+<body>
+
+  <div class="confirmation-wrap" id="conf-wrap">
+    <div class="confirmation-card" id="conf-card">
+      <div class="checkmark-anim" id="conf-icon">✓</div>
+      <h1 class="serif" id="conf-title">You're booked!</h1>
+      <p id="conf-subtitle">Your reservation is confirmed and payment has been processed. Check your email for details.</p>
+
+      <div class="confirmation-details">
+        <div class="conf-row">
+          <span class="conf-label">Confirmation #</span>
+          <span class="conf-value"><span class="conf-number" id="conf-number">—</span></span>
+        </div>
+        <div class="conf-row">
+          <span class="conf-label">Guest</span>
+          <span class="conf-value" id="conf-name">—</span>
+        </div>
+        <div class="conf-row">
+          <span class="conf-label">Email</span>
+          <span class="conf-value" id="conf-email">—</span>
+        </div>
+        <div class="conf-row">
+          <span class="conf-label">Check-In</span>
+          <span class="conf-value" id="conf-checkin">—</span>
+        </div>
+        <div class="conf-row">
+          <span class="conf-label">Check-Out</span>
+          <span class="conf-value" id="conf-checkout">—</span>
+        </div>
+        <div class="conf-row">
+          <span class="conf-label">Duration</span>
+          <span class="conf-value" id="conf-nights">—</span>
+        </div>
+        <div class="conf-row">
+          <span class="conf-label">Guests</span>
+          <span class="conf-value" id="conf-guests">—</span>
+        </div>
+        <div class="conf-row" style="border-bottom:none;">
+          <span class="conf-label">Total Paid</span>
+          <span class="conf-value" style="font-size:1.2rem;color:var(--teal);" id="conf-total">—</span>
+        </div>
+      </div>
+
+      <div class="add-to-cal-row">
+        <a href="#" class="cal-btn" id="cal-google">📅 Google Calendar</a>
+        <a href="#" class="cal-btn" id="cal-ical">📅 Apple / iCal</a>
+        <a href="#" class="cal-btn" id="cal-outlook">📅 Outlook</a>
+      </div>
+
+      <div class="what-next">
+        <h4>What Happens Next</h4>
+        <ul style="padding-left:18px;">
+          <li>📧 Confirmation email + rental agreement copy sent to your email</li>
+          <li>🕓 Check-in at <strong>4:00 PM</strong> on your arrival date</li>
+          <li>🕙 Check-out by <strong>11:00 AM</strong> on your departure date</li>
+          <li>📍 Detailed arrival instructions will be sent closer to your stay</li>
+          <li>❓ Questions? Email <a href="mailto:dgoehl@gmail.com" style="color:var(--teal);">dgoehl@gmail.com</a></li>
+        </ul>
+      </div>
+
+      <div style="margin-top:28px;">
+        <a href="/index.html" class="btn btn-secondary btn-sm">← Back to SugarCrest</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/calendar.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const p      = new URLSearchParams(window.location.search);
+      const conf   = p.get('conf')    || '—';
+      const name   = p.get('name')    || '—';
+      const email  = p.get('email')   || '—';
+      const ci     = p.get('checkin') || '';
+      const co     = p.get('checkout')|| '';
+      const nights = p.get('nights')  || '—';
+      const total  = p.get('total')   || '0';
+      const guests = p.get('guests')  || '—';
+      const type   = p.get('type')    || 'public';
+
+      document.getElementById('conf-number').textContent  = conf;
+      document.getElementById('conf-name').textContent    = name;
+      document.getElementById('conf-email').textContent   = email;
+      document.getElementById('conf-nights').textContent  = `${nights} nights`;
+      document.getElementById('conf-guests').textContent  = guests;
+      document.getElementById('conf-total').textContent   = formatCurrency(Number(total));
+
+      // Format dates
+      function niceDate(str) {
+        if (!str) return '—';
+        const [y,m,d] = str.split('-').map(Number);
+        return new Date(y, m-1, d).toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+      }
+      document.getElementById('conf-checkin').textContent  = niceDate(ci);
+      document.getElementById('conf-checkout').textContent = niceDate(co);
+
+      // Family-specific styling
+      if (type === 'family') {
+        document.getElementById('conf-icon').classList.add('family');
+        document.getElementById('conf-title').textContent    = "You're booked! 🏡";
+        document.getElementById('conf-subtitle').textContent = "Your friends & family booking is confirmed. We can't wait to host you at SugarCrest!";
+        document.getElementById('conf-wrap').style.background = 'linear-gradient(135deg, #f8f5ff 0%, #ede8f5 100%)';
+      }
+
+      // Calendar links
+      function toCalDate(str) {
+        // YYYYMMDD
+        return str.replace(/-/g, '');
+      }
+      const title    = encodeURIComponent('SugarCrest Lakehouse Stay');
+      const location = encodeURIComponent('Sugar Lake, Minnesota');
+      const details  = encodeURIComponent(`Confirmation: ${conf} | Check-in: 4 PM | Check-out: 11 AM`);
+
+      if (ci && co) {
+        const ciCal = toCalDate(ci);
+        const coCal = toCalDate(co);
+
+        document.getElementById('cal-google').href =
+          `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${ciCal}/${coCal}&details=${details}&location=${location}`;
+
+        // iCal / Apple
+        const icsContent = [
+          'BEGIN:VCALENDAR',
+          'VERSION:2.0',
+          'PRODID:-//SugarCrest//Booking//EN',
+          'BEGIN:VEVENT',
+          `DTSTART;VALUE=DATE:${ciCal}`,
+          `DTEND;VALUE=DATE:${coCal}`,
+          `SUMMARY:SugarCrest Lakehouse Stay`,
+          `DESCRIPTION:Confirmation: ${conf}\\nCheck-in after 4 PM\\nCheck-out by 11 AM\\nQuestions: dgoehl@gmail.com`,
+          `LOCATION:Sugar Lake, Minnesota`,
+          'END:VEVENT',
+          'END:VCALENDAR'
+        ].join('\r\n');
+
+        const icsBlob = new Blob([icsContent], { type: 'text/calendar' });
+        const icsUrl  = URL.createObjectURL(icsBlob);
+        document.getElementById('cal-ical').href    = icsUrl;
+        document.getElementById('cal-ical').download = `sugarcrest-${conf}.ics`;
+        document.getElementById('cal-outlook').href    = icsUrl;
+        document.getElementById('cal-outlook').download = `sugarcrest-${conf}.ics`;
+      }
+    });
+  </script>
+</body>
+</html>

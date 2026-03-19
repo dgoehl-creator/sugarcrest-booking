@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Book your stay at SugarCrest — Premium lakehouse on Sugar Lake, Minnesota.">
+  <title>Book Your Stay — SugarCrest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Stripe.js — must load from Stripe CDN -->
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    /* Iframe-safe: works both standalone and embedded in Squarespace */
+    body.embedded .nav,
+    body.embedded .footer { display: none; }
+    body.embedded { padding-top: 0; }
+    body.embedded .booking-layout { padding-top: 24px; }
+    .page-header { background: var(--off-white); border-bottom: 1px solid var(--border); padding: 20px 24px; text-align: center; }
+    .page-header h1 { font-size: 1.4rem; color: var(--teal); }
+    .page-header p  { font-size: .85rem; color: var(--text-muted); margin-top: 4px; }
+    .section-heading { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    #min-stay-warning { display: none; background: var(--amber-pale); border: 1px solid var(--amber); border-radius: var(--radius-sm); padding: 10px 14px; font-size: .85rem; color: #7a4a00; margin-top: 8px; }
+    .trust-badges { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 16px; }
+    .trust-badge { display: flex; align-items: center; gap: 6px; font-size: .75rem; color: var(--text-muted); }
+    .trust-badge span { font-size: .9rem; }
+  </style>
+</head>
+<body>
+
+  <!-- ── Nav (hidden when embedded) ── -->
+  <nav class="nav">
+    <a href="/index.html" class="nav-brand">Sugar<span class="serif" style="color:var(--amber)">Crest</span></a>
+    <div class="nav-links">
+      <a href="/index.html">← Back to Property</a>
+    </div>
+  </nav>
+
+  <!-- ── Page header ── -->
+  <div class="page-header">
+    <h1 class="serif">Complete Your Booking</h1>
+    <p>SugarCrest · Sugar Lake, Minnesota · $1,500/night</p>
+  </div>
+
+  <!-- ── Booking Layout ── -->
+  <div class="booking-layout">
+
+    <!-- ── Left: Form ── -->
+    <div>
+      <form id="booking-form" novalidate>
+
+        <!-- Dates -->
+        <div class="card" style="margin-bottom:24px;">
+          <div class="card-body">
+            <div class="section-heading">📅 Your Dates</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="checkin">Check-In *</label>
+                <input type="date" id="checkin" name="checkin" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="checkout">Check-Out *</label>
+                <input type="date" id="checkout" name="checkout" class="form-control" required>
+              </div>
+            </div>
+            <div id="min-stay-warning"></div>
+            <div class="form-group">
+              <label class="form-label" for="guest-count">Number of Guests *</label>
+              <select id="guest-count" name="guest-count" class="form-control" required>
+                <option value="">Select guests…</option>
+                <option>1–4 guests</option>
+                <option>5–8 guests</option>
+                <option>9–12 guests</option>
+                <option>13–16 guests</option>
+                <option>17–18 guests</option>
+              </select>
+              <div class="form-note">Maximum 18 guests</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Guest Info -->
+        <div class="card" style="margin-bottom:24px;">
+          <div class="card-body">
+            <div class="section-heading">👤 Guest Information</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="guest-name">Full Name *</label>
+                <input type="text" id="guest-name" name="guest-name" class="form-control" placeholder="Jane Smith" required autocomplete="name">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="guest-email">Email Address *</label>
+                <input type="email" id="guest-email" name="guest-email" class="form-control" placeholder="jane@example.com" required autocomplete="email">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="guest-phone">Phone Number *</label>
+                <input type="tel" id="guest-phone" name="guest-phone" class="form-control" placeholder="+1 (555) 000-0000" required autocomplete="tel">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="guest-address">Home Address</label>
+                <input type="text" id="guest-address" name="guest-address" class="form-control" placeholder="123 Main St, City, ST" autocomplete="street-address">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="special-requests">Special Requests</label>
+              <textarea id="special-requests" name="special-requests" class="form-control" placeholder="Early check-in request, accessibility needs, event details, etc."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="checkbox-wrap">
+                <input type="checkbox" id="returning-guest" name="returning-guest">
+                <span class="checkbox-label">I'm a returning SugarCrest guest</span>
+              </label>
+              <div class="returning-guest-note" id="returning-guest-note">
+                ⭐ <strong>Welcome back!</strong> Returning guests receive priority rebooking and may be eligible for special rates. We'll reach out to confirm your personalized rate before or after your booking.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Legal Agreement -->
+        <div class="card" style="margin-bottom:24px;">
+          <div class="card-body">
+            <div class="section-heading">📋 Rental Agreement</div>
+            <div class="alert alert-info" style="margin-bottom:16px;">
+              <span>ℹ️</span>
+              <div>Please review and accept our rental agreement before completing your booking. A copy will be emailed to you upon confirmation.</div>
+            </div>
+            <label class="checkbox-wrap" style="align-items:flex-start;gap:12px;">
+              <input type="checkbox" id="agree-terms" name="agree-terms" required style="margin-top:3px;">
+              <span class="checkbox-label">
+                I have read and agree to SugarCrest's
+                <a href="#" class="agreement-link" style="color:var(--teal);font-weight:600;text-decoration:underline;">Booking Terms and Rental Agreement</a>
+                <span style="color:#c0392b;"> *</span>
+              </span>
+            </label>
+            <div class="form-note" style="margin-top:10px;">
+              By accepting, you acknowledge the agreement and authorize the stated charges. Your acceptance timestamp will be recorded.
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment -->
+        <div class="card" style="margin-bottom:24px;">
+          <div class="card-body">
+            <div class="section-heading">💳 Payment</div>
+            <div class="alert alert-info" style="margin-bottom:20px;">
+              <span>🔒</span>
+              <div>Full payment is charged now. Payments processed securely via <strong>Stripe</strong>. Your card data never touches our servers.</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Card Details *</label>
+              <div class="stripe-element-wrap">
+                <div id="card-element"></div>
+              </div>
+              <div id="card-errors" role="alert"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" id="pay-btn" class="btn btn-primary btn-block btn-lg" disabled>
+          Please accept the rental agreement to continue
+        </button>
+
+        <div class="trust-badges" style="justify-content:center;margin-top:16px;">
+          <div class="trust-badge"><span>🔒</span> Secure payment via Stripe</div>
+          <div class="trust-badge"><span>✉️</span> Instant confirmation email</div>
+          <div class="trust-badge"><span>📋</span> Agreement copy emailed</div>
+        </div>
+      </form>
+    </div>
+
+    <!-- ── Right: Summary sidebar ── -->
+    <div class="booking-sidebar">
+      <div class="booking-summary-card">
+        <h3>🏡 Booking Summary</h3>
+        <div class="summary-row">
+          <span>Property</span>
+          <span style="font-weight:600;">SugarCrest</span>
+        </div>
+        <div class="summary-row">
+          <span>Location</span>
+          <span>Sugar Lake, MN</span>
+        </div>
+        <div class="summary-row">
+          <span>Check-In</span>
+          <span id="summary-checkin">—</span>
+        </div>
+        <div class="summary-row">
+          <span>Check-Out</span>
+          <span id="summary-checkout">—</span>
+        </div>
+        <div class="summary-row">
+          <span>Duration</span>
+          <span id="summary-nights">—</span>
+        </div>
+        <div class="summary-row">
+          <span>Rate</span>
+          <span id="summary-rate">$1,500/night</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total</span>
+          <span class="summary-total-amount" id="summary-total-amount">—</span>
+        </div>
+      </div>
+
+      <div class="booking-summary-card" style="background:#e8f4f7;">
+        <h3 style="font-size:.9rem;color:var(--teal);">Check-In Details</h3>
+        <div style="font-size:.85rem;color:var(--text-muted);line-height:1.7;">
+          <div>🕓 <strong>Check-in:</strong> 4:00 PM</div>
+          <div>🕙 <strong>Check-out:</strong> 11:00 AM</div>
+          <div>🏡 <strong>Location:</strong> Sugar Lake, MN</div>
+          <div style="margin-top:8px;">Detailed arrival instructions sent closer to your stay.</div>
+        </div>
+      </div>
+
+      <div class="booking-summary-card" style="background:#fff8e8;">
+        <h3 style="font-size:.9rem;color:var(--amber-dark);">Cancellation Policy</h3>
+        <div style="font-size:.82rem;color:var(--text-muted);line-height:1.7;">
+          <div>✅ 60+ days: Full refund (−$250 fee)</div>
+          <div>⚠️ 30–60 days: 50% refund</div>
+          <div>❌ &lt;30 days: No refund</div>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:16px;">
+        <a href="mailto:dgoehl@gmail.com" style="font-size:.82rem;color:var(--text-muted);">
+          Questions? Contact us →
+        </a>
+      </div>
+    </div>
+
+  </div><!-- /booking-layout -->
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <div class="footer-brand">Sugar<span>Crest</span></div>
+    <p>Sugar Lake, Minnesota · <a href="mailto:dgoehl@gmail.com">dgoehl@gmail.com</a></p>
+    <p style="margin-top:8px;font-size:.75rem;">© 2026 SugarCrest LLC</p>
+  </footer>
+
+  <script src="js/calendar.js"></script>
+  <script src="js/booking.js"></script>
+  <script>
+    // Detect iframe embedding → add .embedded class
+    if (window.self !== window.top) document.body.classList.add('embedded');
+
+    // Sync sidebar date display with date inputs
+    document.addEventListener('DOMContentLoaded', () => {
+      const ci = document.getElementById('checkin');
+      const co = document.getElementById('checkout');
+      const siCI = document.getElementById('summary-checkin');
+      const siCO = document.getElementById('summary-checkout');
+
+      function syncDates() {
+        if (siCI && ci?.value) {
+          const d = parseDate(ci.value);
+          siCI.textContent = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+        }
+        if (siCO && co?.value) {
+          const d = parseDate(co.value);
+          siCO.textContent = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+        }
+      }
+      ci?.addEventListener('change', syncDates);
+      co?.addEventListener('change', syncDates);
+      syncDates();
+    });
+  </script>
+</body>
+</html>

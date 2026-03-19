@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>SugarCrest Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- ── Password Gate ── -->
+  <div class="password-gate" id="password-gate">
+    <div class="password-gate-card">
+      <div style="font-size:2.5rem;margin-bottom:16px;">🏡</div>
+      <h2 class="serif">SugarCrest Admin</h2>
+      <p>Enter your admin password to continue</p>
+      <div class="form-group">
+        <input type="password" id="pw-input" class="form-control" placeholder="Password…" autocomplete="current-password">
+      </div>
+      <button class="btn btn-teal btn-block" id="pw-submit">Sign In →</button>
+      <div class="password-error" id="pw-error"></div>
+    </div>
+  </div>
+
+  <!-- ── Admin Shell ── -->
+  <div class="admin-layout" id="admin-shell" style="display:none;">
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-brand">
+        SugarCrest
+        <small>Admin Dashboard</small>
+      </div>
+
+      <div class="admin-nav-section">Overview</div>
+      <div class="admin-nav-item active" data-section="dashboard">
+        <span class="nav-icon">📊</span> Dashboard
+      </div>
+
+      <div class="admin-nav-section">Bookings</div>
+      <div class="admin-nav-item" data-section="public-bookings">
+        <span class="nav-icon">📅</span> Public Bookings
+      </div>
+      <div class="admin-nav-item" data-section="family-bookings">
+        <span class="nav-icon">👨‍👩‍👧</span> F&amp;F Bookings
+      </div>
+
+      <div class="admin-nav-section">Management</div>
+      <div class="admin-nav-item" data-section="family-allocations">
+        <span class="nav-icon">🗓️</span> Family Allocations
+      </div>
+      <div class="admin-nav-item" data-section="blocked-dates">
+        <span class="nav-icon">🚫</span> Blocked Dates
+      </div>
+
+      <div class="admin-nav-section">Account</div>
+      <div class="admin-nav-item" id="logout-btn">
+        <span class="nav-icon">🚪</span> Log Out
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="admin-main">
+
+      <!-- ══════════════ DASHBOARD ══════════════ -->
+      <div class="admin-section active" id="section-dashboard">
+        <div class="admin-header">
+          <h1>Dashboard</h1>
+          <p>Welcome back, Dave. Here's your SugarCrest overview.</p>
+        </div>
+        <div class="stat-cards" id="stat-cards">
+          <div class="stat-card">
+            <div class="stat-card-label">Total Bookings</div>
+            <div class="stat-card-value" id="stat-total">—</div>
+            <div class="stat-card-sub">All time</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Upcoming</div>
+            <div class="stat-card-value" id="stat-upcoming">—</div>
+            <div class="stat-card-sub">Future stays</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Revenue (YTD)</div>
+            <div class="stat-card-value" id="stat-revenue">—</div>
+            <div class="stat-card-sub">Public bookings</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">F&amp;F Bookings</div>
+            <div class="stat-card-value" id="stat-family">—</div>
+            <div class="stat-card-sub">All time</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Returning Guests</div>
+            <div class="stat-card-value" id="stat-returning">—</div>
+            <div class="stat-card-sub">Flagged</div>
+          </div>
+        </div>
+
+        <!-- Next upcoming booking -->
+        <div class="data-table-wrap">
+          <div class="data-table-header">
+            <h3>📅 Next Upcoming Stays</h3>
+          </div>
+          <table class="data-table" id="upcoming-table">
+            <thead>
+              <tr>
+                <th>Guest</th>
+                <th>Check-In</th>
+                <th>Check-Out</th>
+                <th>Nights</th>
+                <th>Guests</th>
+                <th>Type</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody id="upcoming-tbody">
+              <tr><td colspan="7" style="text-align:center;color:#aaa;padding:24px;">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══════════════ PUBLIC BOOKINGS ══════════════ -->
+      <div class="admin-section" id="section-public-bookings">
+        <div class="admin-header">
+          <h1>Public Bookings</h1>
+          <p>All paid bookings from the public booking page.</p>
+        </div>
+        <div class="data-table-wrap">
+          <div class="data-table-header">
+            <h3>All Public Bookings</h3>
+            <button class="btn btn-sm btn-teal" id="refresh-public">↻ Refresh</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Conf #</th>
+                <th>Guest</th>
+                <th>Contact</th>
+                <th>Check-In</th>
+                <th>Check-Out</th>
+                <th>Nights</th>
+                <th>Guests</th>
+                <th>Amount</th>
+                <th>Returning</th>
+                <th>Booked On</th>
+              </tr>
+            </thead>
+            <tbody id="public-tbody">
+              <tr><td colspan="10" style="text-align:center;color:#aaa;padding:24px;">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══════════════ FAMILY BOOKINGS ══════════════ -->
+      <div class="admin-section" id="section-family-bookings">
+        <div class="admin-header">
+          <h1>Friends &amp; Family Bookings</h1>
+          <p>All F&amp;F bookings from the private family page. Rate: $500 flat.</p>
+        </div>
+        <div class="data-table-wrap" style="border-left:4px solid #6b33c4;">
+          <div class="data-table-header">
+            <h3>F&amp;F Bookings <span class="badge badge-purple" style="margin-left:8px;">Private Rate</span></h3>
+            <button class="btn btn-sm btn-teal" id="refresh-family">↻ Refresh</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Conf #</th>
+                <th>Guest</th>
+                <th>Contact</th>
+                <th>Check-In</th>
+                <th>Check-Out</th>
+                <th>Nights</th>
+                <th>Guests</th>
+                <th>Amount</th>
+                <th>Message</th>
+                <th>Booked On</th>
+              </tr>
+            </thead>
+            <tbody id="family-tbody">
+              <tr><td colspan="10" style="text-align:center;color:#aaa;padding:24px;">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══════════════ FAMILY ALLOCATIONS ══════════════ -->
+      <div class="admin-section" id="section-family-allocations">
+        <div class="admin-header">
+          <h1>Family Date Allocations</h1>
+          <p>Allocate specific date windows for friends &amp; family. These dates are hidden from the public calendar.</p>
+        </div>
+
+        <!-- Add new allocation -->
+        <div class="data-table-wrap" style="margin-bottom:24px;">
+          <div class="data-table-header">
+            <h3>➕ Add Family Window</h3>
+          </div>
+          <div style="padding:24px;">
+            <div class="alert alert-warning" style="margin-bottom:20px;">
+              <span>⚠️</span>
+              <div><strong>Important:</strong> These dates will be hidden from the public booking calendar and only appear on the private <code>/family.html</code> page.</div>
+            </div>
+            <div class="form-row" style="max-width:600px;">
+              <div class="form-group">
+                <label class="form-label">Start Date (Check-In)</label>
+                <input type="date" id="alloc-start" class="form-control">
+              </div>
+              <div class="form-group">
+                <label class="form-label">End Date (Check-Out)</label>
+                <input type="date" id="alloc-end" class="form-control">
+              </div>
+            </div>
+            <div class="form-group" style="max-width:600px;">
+              <label class="form-label">Note (optional — shown on family.html)</label>
+              <input type="text" id="alloc-note" class="form-control" placeholder="e.g. 'Perfect for the Johnsons weekend'">
+            </div>
+            <button class="btn btn-teal" id="add-alloc-btn">Add Family Window →</button>
+          </div>
+        </div>
+
+        <!-- Existing allocations -->
+        <div class="data-table-wrap">
+          <div class="data-table-header">
+            <h3>Current Allocations</h3>
+            <button class="btn btn-sm btn-teal" id="refresh-allocations">↻ Refresh</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Nights</th>
+                <th>Note</th>
+                <th>Created</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="allocations-tbody">
+              <tr><td colspan="7" style="text-align:center;color:#aaa;padding:24px;">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══════════════ BLOCKED DATES ══════════════ -->
+      <div class="admin-section" id="section-blocked-dates">
+        <div class="admin-header">
+          <h1>Blocked Dates</h1>
+          <p>Block dates for personal use, maintenance, or any reason. These appear as unavailable on the public calendar.</p>
+        </div>
+
+        <div class="data-table-wrap" style="margin-bottom:24px;">
+          <div class="data-table-header">
+            <h3>➕ Add Blocked Period</h3>
+          </div>
+          <div style="padding:24px;">
+            <div class="form-row" style="max-width:600px;">
+              <div class="form-group">
+                <label class="form-label">Start Date</label>
+                <input type="date" id="block-start" class="form-control">
+              </div>
+              <div class="form-group">
+                <label class="form-label">End Date</label>
+                <input type="date" id="block-end" class="form-control">
+              </div>
+            </div>
+            <div class="form-group" style="max-width:600px;">
+              <label class="form-label">Label (optional)</label>
+              <input type="text" id="block-label" class="form-control" placeholder="e.g. 'Personal stay', 'Maintenance', 'Family event'">
+            </div>
+            <button class="btn btn-teal" id="add-block-btn">Block These Dates →</button>
+          </div>
+        </div>
+
+        <div class="data-table-wrap">
+          <div class="data-table-header">
+            <h3>Active Blocks</h3>
+            <button class="btn btn-sm btn-teal" id="refresh-blocks">↻ Refresh</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Start</th>
+                <th>End</th>
+                <th>Nights</th>
+                <th>Label</th>
+                <th>Created</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="blocks-tbody">
+              <tr><td colspan="6" style="text-align:center;color:#aaa;padding:24px;">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="js/calendar.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
