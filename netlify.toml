@@ -1,17 +1,9 @@
 [build]
   publish = "."
   functions = "api"
-  command = "npm install"
 
 [build.environment]
   NODE_VERSION = "18"
-
-[[headers]]
-  for = "/api/*"
-  [headers.values]
-    Access-Control-Allow-Origin = "*"
-    Access-Control-Allow-Headers = "Content-Type"
-    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
 
 [[redirects]]
   from = "/api/*"
