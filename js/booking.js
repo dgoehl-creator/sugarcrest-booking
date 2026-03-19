@@ -37,61 +37,82 @@ const AGREEMENT_HTML = `
         color:#888; line-height:1; padding:4px 8px; border-radius:8px;
       ">&times;</button>
     </div>
-    <div style="padding:28px 32px; overflow-y:auto; flex:1; font-size:.9rem; line-height:1.75; color:#2d2d2d;">
-      <p style="margin-bottom:16px;font-style:italic;color:#888;">
-        ⚠️ <strong>PLACEHOLDER TEXT</strong> — Dave Goehl will replace this with the final rental agreement before going live.
+          <div style="padding:28px 32px; overflow-y:auto; flex:1; font-size:.9rem; line-height:1.75; color:#2d2d2d;">
+
+      <h3 style="color:#1a5c6b;margin:20px 0 8px;">SHORT TERM RENTAL AGREEMENT</h3>
+      <p>This Short Term Rental Agreement ("Agreement") is made by and between Sugarcrest, LLLP ("Sugarcrest") and Guest as of the date of Guest's booking.</p>
+
+      <h3 style="color:#1a5c6b;margin:20px 0 8px;">Property</h3>
+      <p>37857 North Sugar Lake Road, Cohasset, MN 55721. The Property includes two furnished cabins, including linens, towels, and standard kitchen serving ware and utensils.</p>
+
+      <h3 style="color:#1a5c6b;margin:20px 0 8px;">Rental Party &amp; Maximum Occupancy</h3>
+      <p>The rental party shall consist of up to 16 adults. The maximum number of overnight guests is limited to 16 persons. An additional charge of $100 per person per night for guests exceeding 16 will be assessed.</p>
+
+      <h3 style="color:#1a5c6b;margin:20px 0 8px;">Rental Term</h3>
+      <p>Check-in: <strong>4:00 PM Central Time</strong>. Check-out: <strong>11:00 AM Central Time</strong>.</p>
+
+      <h3 style="color:#1a5c6b;margin:20px 0 8px;">Cancellation Policy</h3>
+      <ul style="padding-left:20px;margin-bottom:12px;">
+        <li><strong>100% refund</strong> if canceled 120+ days prior to Check-in</li>
+        <li><strong>75% refund</strong> if canceled 90–119 days prior to Check-in</li>
+        <li><strong>50% refund</strong> if canceled 60–89 days prior to Check-in</li>
+        <li><strong>No refund</strong> if canceled 59 or fewer days prior to Check-in</li>
+      </ul>
+      <p>Guest is encouraged to purchase trip cancellation insurance at <a href="https://www.insuremytrip.com" target="_blank" style="color:#1a5c6b;">insuremytrip.com</a> or <a href="https://www.vacationrentalinsurance.com" target="_blank" style="color:#1a5c6b;">vacationrentalinsurance.com</a>.</p>
+
+      <h3 style="color:#1a5c6b;margin:20px 0 8px;">Payment</h3>
+      <p>Full payment via Stripe. Booking is confirmed upon receipt of payment.</p>
+
+      <h3 style="color:#1a5c6b;margin:20px 0 8px;">EXHIBIT A — RENTAL RULES</h3>
+
+      <h4 style="margin:16px 0 6px;">No Indoor Smoking</h4>
+      <p>Smoking is NOT allowed inside the cabins or any other facilities on the property. Guest agrees to pay not less than $450 for odor abatement if smoking occurs inside. Cigarette butts from outdoor smoking shall be disposed of properly in black receptacles near both cabins.</p>
+
+      <h4 style="margin:16px 0 6px;">Rental Party Use Only</h4>
+      <p>Guests may not exceed the overnight occupancy limit. People other than those in the rental Party may not visit or stay overnight without Owner's prior permission. Failure to obtain approval will result in additional charges and/or removal from the property.</p>
+
+      <h4 style="margin:16px 0 6px;">Indemnification and Hold Harmless</h4>
+      <p>Guest and rental Party shall be solely responsible for any property damage, accident, illness, injury, or death arising out of use of the property. Guest and each member of the rental Party hereby agree to indemnify and hold Sugarcrest and its agent(s) harmless from any and all claims. Guest and each member of the rental Party assume the risk of injury related to weather, falling trees, and any activities on the property including all lake/swimming/dock/beach areas.</p>
+
+      <h4 style="margin:16px 0 6px;">Proper Use and Care</h4>
+      <p>Guests are expected to use the Property, cabins, appliances, furnishings, lake toys, and recreational items in good condition and return them to their original location prior to departure.</p>
+
+      <h4 style="margin:16px 0 6px;">Damage to Property</h4>
+      <p>All property must be left undamaged. Sugarcrest reserves the right to withhold fees from the damage deposit and/or file a damage claim for any damage caused during the stay.</p>
+
+      <h4 style="margin:16px 0 6px;">Pets</h4>
+      <p>Maximum two non-aggressive breed pets permitted on a case-by-case, Owner-approved basis. Pets must be kept on property, cleaned up after, and wiped down before entering cabins if wet or dirty.</p>
+
+      <h4 style="margin:16px 0 6px;">Housekeeping</h4>
+      <p>No daily housekeeping service. Linens and bath towels are included, but daily maid service is not included in the rental rate.</p>
+
+      <h4 style="margin:16px 0 6px;">Garbage</h4>
+      <p>All garbage must be stowed in proper garbage or recycling receptacles and emptied into the large garbage cans in the Main House laundry room.</p>
+
+      <h4 style="margin:16px 0 6px;">Duffer Golf Course</h4>
+      <p>Use is at Guest's own risk. No children under age 12 without adult supervision. Guest is responsible for any damage caused by golf course use. Sugarcrest assumes no liability for any injuries.</p>
+
+      <h4 style="margin:16px 0 6px;">Owner's Property</h4>
+      <p>The Garages and storage shed (Sissieville) are off-limits. The Property may contain the Owner's private items or closets not available for use. Use of Owner's private property without permission may result in a damage claim.</p>
+
+      <h4 style="margin:16px 0 6px;">Mechanical Failures</h4>
+      <p>Sugarcrest cannot guarantee against mechanical failures of any systems or appliances. Guest agrees to notify Sugarcrest as soon as possible of any defective or non-working units. Sugarcrest will make every reasonable effort to repair or replace them quickly.</p>
+
+      <h4 style="margin:16px 0 6px;">Water and Septic</h4>
+      <p>The cabins are on well and septic systems. <strong>DO NOT FLUSH anything other than toilet paper.</strong> No feminine products should be flushed at any time. Violations may result in additional fees including fees to pump and repair septic systems.</p>
+
+      <h4 style="margin:16px 0 6px;">Fireplace and Fire Pit</h4>
+      <p>Outdoor fires should be contained in the fire pit to the southwest of the main cabin. When using the indoor fireplace, open the damper before starting and close it after the fire is fully extinguished. Do not leave fires unattended. Fully extinguish all fires before retiring or leaving the Property.</p>
+
+      <h4 style="margin:16px 0 6px;">Aquatic Invasive Species (AIS)</h4>
+      <p>Under Minnesota law, it is illegal to transport aquatic plants, prohibited invasive animals, or water to and from water bodies. Watercraft must be properly decontaminated if coming from an AIS-affected water. For more information: <a href="https://www.dnr.state.mn.us/invasives/ais/index.html" target="_blank" style="color:#1a5c6b;">MN DNR AIS Information</a>.</p>
+
+      <p style="margin-top:24px;padding:16px;background:#f0f7f5;border-radius:8px;font-weight:600;color:#1a5c6b;">
+        By checking the agreement box and submitting payment, Guest acknowledges and accepts this Short Term Rental Agreement and all Rental Rules, and agrees to assume sole responsibility for the rental Party's adherence to said Agreement and Rules.
       </p>
 
-      <h3 style="color:#1a5c6b;margin:20px 0 8px;">1. Parties</h3>
-      <p>This Vacation Rental Agreement ("Agreement") is entered into between <strong>SugarCrest LLC</strong> ("Owner/Host"), owner of the SugarCrest property located at Sugar Lake, Minnesota ("Property"), and the person completing this booking ("Guest").</p>
-
-      <h3 style="color:#1a5c6b;margin:20px 0 8px;">2. Rental Period &amp; Check-In/Check-Out</h3>
-      <p>The rental period is as specified in your booking confirmation. <strong>Check-in is at 4:00 PM</strong> on the arrival date. <strong>Check-out is at 11:00 AM</strong> on the departure date. Early check-in or late check-out may be available upon request but is not guaranteed.</p>
-
-      <h3 style="color:#1a5c6b;margin:20px 0 8px;">3. Payment &amp; Rates</h3>
-      <p>Full payment is due at the time of booking. The nightly rate and total are as displayed at checkout. All fees include cleaning. No refunds will be issued for early departure.</p>
-
-      <h3 style="color:#1a5c6b;margin:20px 0 8px;">4. Cancellation Policy</h3>
-      <p><strong>More than 60 days before check-in:</strong> Full refund minus a $250 processing fee.<br>
-      <strong>30–60 days before check-in:</strong> 50% refund.<br>
-      <strong>Less than 30 days before check-in:</strong> No refund. Guest is encouraged to purchase travel insurance.</p>
-
-      <h3 style="color:#1a5c6b;margin:20px 0 8px;">5. Maximum Occupancy</h3>
-      <p>The Property accommodates a maximum of <strong>18 guests</strong>. Exceeding this limit is grounds for immediate termination of stay without refund.</p>
-
-      <h3 style="color:#1a5c6b;margin:20px 0 8px;">6. Minimum Stay</h3>
-      <p>A minimum 3-night stay is required during off-season periods. A minimum 5-night stay is required during high season (Memorial Day weekend through Labor Day).</p>
-
-      <h3 style="color:#1a5c6b;margin:20px 0 8px;">7. Rules &amp; Conduct</h3>
-      <ul style="padding-left:20px;margin-bottom:12px;">
-        <li>No smoking inside the Property.</li>
-        <li>Pets are not permitted without prior written approval.</li>
-        <li>Quiet hours are 10:00 PM – 8:00 AM.</li>
-        <li>No illegal substances on Property or grounds.</li>
-        <li>Fireworks and open fires (other than designated fire pits) are prohibited.</li>
-        <li>Guests are responsible for proper use of all watercraft and water sports equipment. All applicable laws and safety regulations must be followed.</li>
-      </ul>
-
-      <h3 style="color:#1a5c6b;margin:20px 0 8px;">8. Damage &amp; Liability</h3>
-      <p>Guest assumes full financial responsibility for any damage to the Property, furnishings, or equipment caused by Guest or Guest's invitees. Owner reserves the right to charge the credit card on file for damages exceeding normal wear and tear. Owner is not responsible for accidents, injuries, or illness that occur on the premises or during the use of amenities.</p>
-
-      <h3 style="color:#1a5c6b;margin:20px 0 8px;">9. Lake &amp; Water Activities</h3>
-      <p>Swimming, boating, wakesurfing, and other water activities are undertaken at Guest's own risk. Life jackets and safety equipment must be used in accordance with Minnesota DNR regulations. Owner assumes no liability for injuries or accidents on or near the water.</p>
-
-      <h3 style="color:#1a5c6b;margin:20px 0 8px;">10. Privacy &amp; Data</h3>
-      <p>Guest information collected during booking is used solely to manage your reservation and communicate regarding your stay. We do not sell or share personal information with third parties except as necessary to process payment (Stripe) or comply with law.</p>
-
-      <h3 style="color:#1a5c6b;margin:20px 0 8px;">11. Force Majeure</h3>
-      <p>Owner shall not be liable for failure to perform obligations due to circumstances beyond Owner's reasonable control, including but not limited to natural disasters, government restrictions, or utility failures.</p>
-
-      <h3 style="color:#1a5c6b;margin:20px 0 8px;">12. Governing Law</h3>
-      <p>This Agreement is governed by the laws of the State of Minnesota. Any disputes shall be resolved in the courts of Kandiyohi County, Minnesota.</p>
-
-      <h3 style="color:#1a5c6b;margin:20px 0 8px;">13. Entire Agreement</h3>
-      <p>This Agreement constitutes the entire agreement between the parties and supersedes all prior negotiations, representations, or agreements. By completing your booking, Guest acknowledges having read, understood, and agreed to all terms.</p>
-
-      <p style="margin-top:24px;padding:16px;background:#f8f6f3;border-radius:8px;font-size:.82rem;color:#888;">
-        Agreement Version: <strong>${AGREEMENT_VER}</strong> · Last Updated: March 2026 ·
+      <p style="margin-top:16px;padding:12px;background:#f8f6f3;border-radius:8px;font-size:.82rem;color:#888;">
+        Agreement Version: <strong>2026-v1.0</strong> · Last Updated: March 2026 ·
         Questions? Contact <a href="mailto:dgoehl@gmail.com" style="color:#1a5c6b;">dgoehl@gmail.com</a>
       </p>
     </div>
