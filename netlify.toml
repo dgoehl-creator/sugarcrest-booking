@@ -1,66 +1,19 @@
 [build]
   publish = "."
   functions = "api"
-  node_bundler = "esbuild"
+  command = "npm install"
 
-[dev]
-  framework = "#static"
-  targetPort = 3000
-
-# ── Function-specific settings ──
-[functions]
-  node_bundler = "esbuild"
-  included_files = ["api/**"]
-
-# ── Redirects: all non-asset paths serve index.html (SPA-style) ──
-[[redirects]]
-  from = "/booking"
-  to   = "/booking.html"
-  status = 200
-
-[[redirects]]
-  from = "/family"
-  to   = "/family.html"
-  status = 200
-
-[[redirects]]
-  from = "/admin"
-  to   = "/admin.html"
-  status = 200
-
-[[redirects]]
-  from = "/confirmation"
-  to   = "/confirmation.html"
-  status = 200
-
-# ── Security headers ──
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options       = "ALLOWALL"
-    # ALLOWALL so Squarespace can embed via iframe
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy        = "strict-origin-when-cross-origin"
-    Permissions-Policy     = "camera=(), microphone=(), geolocation=()"
+[build.environment]
+  NODE_VERSION = "18"
 
 [[headers]]
-  for = "/admin.html"
+  for = "/api/*"
   [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
-    X-Frame-Options = "DENY"
-    # Admin page: never embeddable
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Headers = "Content-Type"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
 
-[[headers]]
-  for = "/family.html"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
-    # Family page: private, no indexing
-
-# ── Environment variables (set these in Netlify dashboard, not here) ──
-# STRIPE_SECRET_KEY   = sk_live_...
-# ADMIN_PASSWORD      = sugarcrest2026!
-# SMTP_HOST           = 127.0.0.1  (or your SMTP relay if on server)
-# SMTP_PORT           = 1025
-# SMTP_USER           = maxdev1968@proton.me
-# SMTP_PASS           = UH0H2A0Hzq21584dNp-3zA
-# OWNER_EMAIL         = dgoehl@gmail.com
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
