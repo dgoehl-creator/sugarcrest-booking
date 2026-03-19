@@ -3,243 +3,627 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex, nofollow">
-  <!-- noindex — not for public search, shared privately by Dave -->
   <title>SugarCrest — Friends &amp; Family Booking</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
   <script src="https://js.stripe.com/v3/"></script>
   <style>
-    /* Purple theme for family page */
-    :root {
-      --family-purple:      #6b33c4;
-      --family-purple-light:#8b5cf6;
-      --family-purple-pale: #f5f0ff;
-      --family-purple-mid:  #d4b8ff;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #f5f5f5;
+      color: #1a1a1a;
+      line-height: 1.5;
+      font-size: 15px;
     }
-    body { background: #f8f5ff; }
-    body.embedded .family-hero,
-    body.embedded .family-footer { display: none; }
-    body.embedded .family-main { padding-top: 20px; }
-    .family-main {
-      max-width: 720px; margin: 0 auto; padding: 40px 24px 60px;
+
+    .site-header {
+      background: #fff;
+      border-bottom: 1px solid #e5e5e5;
+      padding: 14px 24px;
+      text-align: center;
     }
-    .step-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--family-purple); color: #fff;
-      width: 28px; height: 28px; border-radius: 50%;
-      justify-content: center; font-weight: 700; font-size: .85rem;
-      flex-shrink: 0;
+    .site-header h1 { font-size: 1.2rem; font-weight: 700; color: #1a1a1a; }
+    .site-header p { font-size: .8rem; color: #888; margin-top: 2px; }
+
+    .page-wrap { max-width: 560px; margin: 32px auto 60px; padding: 0 16px; }
+
+    .notice {
+      background: #fdf8f0;
+      border: 1px solid #e8d8b0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: .88rem;
+      color: #7a5500;
+      margin-bottom: 20px;
     }
-    .step-label { font-weight: 700; font-size: 1rem; color: var(--dark); }
-    .step-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-    .family-card {
-      background: #fff; border: 1.5px solid #e8e2f5; border-radius: 16px;
-      padding: 28px; margin-bottom: 24px;
-      box-shadow: 0 2px 12px rgba(107,51,196,.06);
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid #e5e5e5;
+      padding: 28px;
     }
-    .family-section-title {
-      font-size: .78rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .08em; color: var(--family-purple); margin-bottom: 16px;
-      padding-bottom: 8px; border-bottom: 1.5px solid var(--family-purple-mid);
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #f0f0f0;
     }
-    .family-stripe-btn {
-      background: var(--family-purple);
-      box-shadow: 0 4px 14px rgba(107,51,196,.35);
+
+    .field-group { margin-bottom: 16px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+
+    label {
+      display: block;
+      font-size: .82rem;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 5px;
+      letter-spacing: .2px;
+      text-transform: uppercase;
     }
-    .family-stripe-btn:hover { background: var(--family-purple-light); transform: translateY(-2px); color: #fff; }
-    .family-stripe-btn:disabled { opacity: .5; transform: none; }
-    #family-selected-dates-row {
-      background: var(--family-purple-pale);
-      border: 1.5px solid var(--family-purple-mid);
-      border-radius: 10px; padding: 14px 18px; margin-bottom: 20px;
-      font-size: .9rem; display: none;
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d8d8d8;
+      border-radius: 6px;
+      font-size: .95rem;
+      font-family: inherit;
+      color: #1a1a1a;
+      background: #fff;
+      transition: border-color .15s;
+      -webkit-appearance: none;
     }
-    #family-selected-dates-row.show { display: block; }
-    .family-rate-display {
-      text-align: center; padding: 24px;
-      background: linear-gradient(135deg, var(--family-purple-pale), #fff);
-      border: 2px solid var(--family-purple-mid);
-      border-radius: 12px; margin-bottom: 24px;
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #2a7d8c;
+      box-shadow: 0 0 0 3px rgba(42,125,140,.1);
     }
-    .family-rate-display .amount { font-size: 3rem; font-weight: 800; color: var(--family-purple); line-height: 1; }
-    .family-rate-display .label  { font-size: .88rem; color: #888; margin-top: 4px; }
-    .family-rate-display .breakdown { font-size: .78rem; color: #aaa; margin-top: 8px; }
+    textarea { resize: vertical; min-height: 80px; }
+
+    /* Date cards */
+    .dates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .date-card {
+      border: 1.5px solid #d8d8d8;
+      border-radius: 8px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+    }
+    .date-card:hover { border-color: #2a7d8c; background: #f0f9fa; }
+    .date-card.selected { border-color: #2a7d8c; background: #e8f5f8; }
+    .date-card .dc-dates { font-weight: 700; color: #2a7d8c; font-size: .92rem; }
+    .date-card .dc-nights { font-size: .8rem; color: #888; margin-top: 3px; }
+    .no-dates { color: #888; font-size: .9rem; padding: 12px 0; }
+
+    /* Price box */
+    .price-box {
+      background: #f8fafb;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      font-size: .92rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .price-box .label { color: #555; }
+    .price-box .amount { font-weight: 700; font-size: 1.05rem; color: #1a1a1a; }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: .9rem;
+      color: #333;
+    }
+    .check-row input[type="checkbox"] {
+      width: 17px; height: 17px;
+      margin-top: 2px; flex-shrink: 0;
+      cursor: pointer; accent-color: #2a7d8c;
+    }
+    .check-row a { color: #2a7d8c; text-decoration: underline; cursor: pointer; }
+
+    .stripe-wrap {
+      border: 1px solid #d8d8d8;
+      border-radius: 6px;
+      padding: 11px 12px;
+      background: #fff;
+      transition: border-color .15s;
+    }
+    .stripe-wrap.focused {
+      border-color: #2a7d8c;
+      box-shadow: 0 0 0 3px rgba(42,125,140,.1);
+    }
+    .card-errors { color: #c0392b; font-size: .83rem; margin-top: 6px; min-height: 18px; }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: #2a7d8c;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background .15s;
+      margin-top: 8px;
+    }
+    .btn-submit:hover:not(:disabled) { background: #1f6272; }
+    .btn-submit:disabled { background: #b0bec5; cursor: not-allowed; opacity: .85; }
+
+    .section-divider { border: none; border-top: 1px solid #f0f0f0; margin: 22px 0; }
+
+    .success-msg {
+      display: none;
+      background: #f0faf5;
+      border: 1px solid #a8d8c0;
+      border-radius: 8px;
+      padding: 20px 24px;
+      font-size: .95rem;
+      color: #1a5c3a;
+      line-height: 1.7;
+      text-align: center;
+    }
+    .success-msg .success-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: inline-block; vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #c0392b; color: #fff;
+      padding: 10px 20px; border-radius: 7px;
+      font-size: .88rem; z-index: 9999;
+      opacity: 0; transition: opacity .2s, transform .2s;
+      pointer-events: none;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #toast.success { background: #1a7a4a; }
+
+    /* Modal */
+    #agreement-modal {
+      display: none; position: fixed; inset: 0;
+      z-index: 10000; background: rgba(0,0,0,.55);
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    #agreement-modal.open { display: flex; }
+    .modal-inner {
+      background: #fff; border-radius: 10px;
+      max-width: 660px; width: 100%; max-height: 88vh;
+      display: flex; flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    }
+    .modal-header {
+      padding: 20px 24px 16px; border-bottom: 1px solid #eee;
+      display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
+    }
+    .modal-header h2 { font-size: 1.05rem; color: #1a1a1a; }
+    .modal-close { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #888; padding: 2px 8px; }
+    .modal-body {
+      padding: 20px 24px; overflow-y: auto; flex: 1;
+      font-size: .88rem; line-height: 1.75; color: #333;
+    }
+    .modal-body h3 { font-size: .95rem; color: #2a7d8c; margin: 18px 0 6px; }
+    .modal-body h4 { font-size: .88rem; color: #1a1a1a; margin: 14px 0 4px; }
+    .modal-body ul { padding-left: 18px; margin-bottom: 10px; }
+    .modal-footer { padding: 14px 24px; border-top: 1px solid #eee; flex-shrink: 0; text-align: right; }
+    .btn-accept {
+      padding: 9px 20px; background: #2a7d8c; color: #fff;
+      border: none; border-radius: 6px; font-size: .9rem; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+    }
+    .btn-accept:hover { background: #1f6272; }
+
+    @media (max-width: 480px) {
+      .field-row { grid-template-columns: 1fr; }
+      .card { padding: 20px 18px; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- ── Hero (hidden when embedded) ── -->
-  <div class="family-hero">
-    <div class="family-badge">🏡 Private · Friends &amp; Family Only</div>
-    <h1 class="serif">Welcome to SugarCrest</h1>
-    <p style="color:rgba(255,255,255,.8);max-width:460px;margin:8px auto 0;">
-      You've been personally invited by Dave to enjoy SugarCrest at the friends &amp; family rate.
-      Select your dates below and reserve your stay.
-    </p>
+<header class="site-header">
+  <h1>SugarCrest — Friends &amp; Family Booking</h1>
+  <p>Sugar Lake, Minnesota</p>
+</header>
+
+<div class="page-wrap">
+  <div class="notice">
+    🏠 This page is for family and friends of the Goehl family. Available dates are allocated by the owner.
   </div>
 
-  <!-- ── Main content ── -->
-  <div class="family-main">
+  <div class="card">
+    <div class="card-title">Select Your Dates</div>
 
-    <!-- Rate display -->
-    <div class="family-rate-display">
-      <div class="amount">$500</div>
-      <div class="label">Friends &amp; Family Rate · Any Available Stay</div>
-      <div class="breakdown">Covers cleaning ($300) + landscaping &amp; utilities ($200) · Regardless of length of stay</div>
+    <div class="success-msg" id="success-msg">
+      <span class="success-icon">✅</span>
+      <strong>Booking confirmed!</strong><br>
+      <span id="success-detail"></span>
     </div>
 
     <form id="family-form" novalidate>
 
-      <!-- Step 1: Select dates -->
-      <div class="family-card">
-        <div class="step-row">
-          <div class="step-badge">1</div>
-          <div class="step-label">Select Your Dates</div>
-        </div>
-        <div class="family-section-title">Available Windows</div>
-        <p style="font-size:.85rem;color:#888;margin-bottom:16px;">
-          Dave has pre-selected these dates for family &amp; friends use. Choose the window that works for you.
-        </p>
-        <div class="family-dates-grid" id="family-dates-grid">
-          <div style="grid-column:1/-1;text-align:center;padding:20px;color:#aaa;">
-            <div style="font-size:.9rem;">Loading available dates…</div>
-          </div>
-        </div>
-        <div id="family-selected-dates-row">
-          ✅ <strong>Selected:</strong> <span id="family-selected-dates">—</span>
+      <!-- Date selection -->
+      <div class="field-group">
+        <label>Available Dates</label>
+        <div class="dates-grid" id="dates-grid">
+          <div class="no-dates">Loading available dates…</div>
         </div>
       </div>
 
-      <!-- Step 2: Guest Info -->
-      <div class="family-card">
-        <div class="step-row">
-          <div class="step-badge">2</div>
-          <div class="step-label">Your Information</div>
+      <!-- Guests -->
+      <div class="field-group" style="margin-top:16px;">
+        <label for="family-guests">Number of Guests</label>
+        <select id="family-guests" name="family-guests" required>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8" selected>8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+          <option value="13">13</option>
+          <option value="14">14</option>
+          <option value="15">15</option>
+          <option value="16">16</option>
+        </select>
+      </div>
+
+      <!-- Price -->
+      <div class="price-box">
+        <span class="label">Flat booking fee</span>
+        <span class="amount">$500</span>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- Guest info -->
+      <div class="field-group">
+        <label for="family-name">Full Name</label>
+        <input type="text" id="family-name" placeholder="First Last" required>
+      </div>
+      <div class="field-row">
+        <div>
+          <label for="family-email">Email</label>
+          <input type="email" id="family-email" placeholder="you@example.com" required>
         </div>
-        <div class="family-section-title">Guest Details</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="family-name">Full Name *</label>
-            <input type="text" id="family-name" name="family-name" class="form-control" placeholder="Jane Smith" required autocomplete="name">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="family-email">Email Address *</label>
-            <input type="email" id="family-email" name="family-email" class="form-control" placeholder="jane@example.com" required autocomplete="email">
-          </div>
+        <div>
+          <label for="family-phone">Phone</label>
+          <input type="tel" id="family-phone" placeholder="(555) 000-0000" required>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="family-phone">Phone Number *</label>
-            <input type="tel" id="family-phone" name="family-phone" class="form-control" placeholder="+1 (555) 000-0000" required autocomplete="tel">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="family-guests">Number of Guests</label>
-            <select id="family-guests" name="family-guests" class="form-control">
-              <option value="">Select…</option>
-              <option>1–4 guests</option>
-              <option>5–8 guests</option>
-              <option>9–12 guests</option>
-              <option>13–16 guests</option>
-              <option>17–18 guests</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="family-message">Message for Dave (optional)</label>
-          <textarea id="family-message" name="family-message" class="form-control" placeholder="Anything you'd like Dave to know…"></textarea>
+      </div>
+      <div class="field-group">
+        <label for="family-message">Message <span style="font-weight:400;color:#aaa;">(optional)</span></label>
+        <textarea id="family-message" placeholder="Anything you'd like Dave to know?"></textarea>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- Agreement -->
+      <div class="field-group">
+        <div class="check-row">
+          <input type="checkbox" id="family-agree-terms">
+          <label for="family-agree-terms" style="text-transform:none;font-weight:400;font-size:.9rem;color:#333;cursor:pointer;">
+            I have read and agree to the SugarCrest <a id="open-agreement" href="#">Rental Agreement and Rules</a>
+          </label>
         </div>
       </div>
 
-      <!-- Step 3: Agreement -->
-      <div class="family-card">
-        <div class="step-row">
-          <div class="step-badge">3</div>
-          <div class="step-label">Rental Agreement</div>
+      <!-- Stripe -->
+      <div class="field-group">
+        <label>Card Details</label>
+        <div class="stripe-wrap" id="stripe-wrap">
+          <div id="family-card-element"></div>
         </div>
-        <div class="family-section-title">Terms Acceptance</div>
-        <div class="alert alert-info" style="margin-bottom:16px;">
-          <span>ℹ️</span>
-          <div>Even at the friends &amp; family rate, we ask everyone to accept the standard rental terms. A copy will be emailed to you.</div>
-        </div>
-        <label class="checkbox-wrap" style="align-items:flex-start;gap:12px;">
-          <input type="checkbox" id="family-agree-terms" name="family-agree-terms" required style="margin-top:3px;">
-          <span class="checkbox-label">
-            I have read and agree to SugarCrest's
-            <a href="#" class="agreement-link" style="color:var(--family-purple);font-weight:600;text-decoration:underline;">Booking Terms and Rental Agreement</a>
-            <span style="color:#c0392b;"> *</span>
-          </span>
-        </label>
-        <div class="form-note" style="margin-top:10px;">
-          Your acceptance timestamp will be recorded. A copy of the agreement will be emailed to you.
-        </div>
+        <div class="card-errors" id="family-card-errors"></div>
       </div>
 
-      <!-- Step 4: Payment -->
-      <div class="family-card">
-        <div class="step-row">
-          <div class="step-badge">4</div>
-          <div class="step-label">Payment — $500 Flat Rate</div>
-        </div>
-        <div class="family-section-title">Secure Payment</div>
-        <div class="alert alert-info" style="margin-bottom:20px;">
-          <span>🔒</span>
-          <div>$500 flat rate — covers cleaning &amp; maintenance regardless of your stay length. Processed securely via Stripe.</div>
-        </div>
-        <div class="family-rate-display" style="padding:16px;margin-bottom:20px;">
-          <div class="amount">$500</div>
-          <div class="label">One-time flat rate · Friends &amp; Family</div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Card Details *</label>
-          <div class="stripe-element-wrap">
-            <div id="family-card-element"></div>
-          </div>
-          <div id="family-card-errors" role="alert" style="color:#c0392b;font-size:.85rem;margin-top:8px;"></div>
-        </div>
-      </div>
-
-      <!-- Submit -->
-      <button type="submit" id="family-pay-btn" class="btn btn-block btn-lg family-stripe-btn" disabled>
-        Select dates &amp; accept agreement to continue
+      <button type="submit" class="btn-submit" id="family-pay-btn" disabled>
+        Select a date to continue
       </button>
 
-      <div style="display:flex;gap:16px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
-        <div class="trust-badge"><span>🔒</span> Secure payment via Stripe</div>
-        <div class="trust-badge"><span>✉️</span> Instant confirmation email</div>
-        <div class="trust-badge"><span>🤝</span> Friends &amp; family rate</div>
-      </div>
-
     </form>
+  </div>
+</div>
 
-    <div style="text-align:center;margin-top:32px;font-size:.8rem;color:#bbb;">
-      Questions? Reach out to Dave directly at
-      <a href="mailto:dgoehl@gmail.com" style="color:var(--family-purple);">dgoehl@gmail.com</a>
+<!-- Agreement Modal -->
+<div id="agreement-modal" role="dialog" aria-modal="true">
+  <div class="modal-inner">
+    <div class="modal-header">
+      <h2>SugarCrest Rental Agreement and Rules</h2>
+      <button class="modal-close" id="agreement-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <h3>SHORT TERM RENTAL AGREEMENT</h3>
+      <p>This Short Term Rental Agreement ("Agreement") is made by and between Sugarcrest, LLLP ("Sugarcrest") and Guest as of the date of Guest's booking.</p>
+      <h3>Property</h3>
+      <p>37857 North Sugar Lake Road, Cohasset, MN 55721. The Property includes two furnished cabins, including linens, towels, and standard kitchen serving ware and utensils.</p>
+      <h3>Rental Party &amp; Maximum Occupancy</h3>
+      <p>Up to 16 adults. Additional charge of $100 per person per night for guests exceeding 16.</p>
+      <h3>Rental Term</h3>
+      <p>Check-in: <strong>4:00 PM Central Time</strong>. Check-out: <strong>11:00 AM Central Time</strong>.</p>
+      <h3>Cancellation Policy</h3>
+      <ul>
+        <li><strong>100% refund</strong> if canceled 120+ days prior</li>
+        <li><strong>75% refund</strong> if canceled 90–119 days prior</li>
+        <li><strong>50% refund</strong> if canceled 60–89 days prior</li>
+        <li><strong>No refund</strong> if canceled 59 or fewer days prior</li>
+      </ul>
+      <h3>EXHIBIT A — RENTAL RULES</h3>
+      <h4>No Indoor Smoking</h4>
+      <p>Smoking is NOT allowed inside. Guest agrees to pay not less than $450 for odor abatement if smoking occurs inside.</p>
+      <h4>Indemnification and Hold Harmless</h4>
+      <p>Guest and rental Party assume the risk of injury related to weather, falling trees, and any activities on the property including all lake/swimming/dock/beach areas.</p>
+      <h4>Pets</h4>
+      <p>Maximum two non-aggressive breed pets permitted on a case-by-case, Owner-approved basis.</p>
+      <h4>Water and Septic</h4>
+      <p>The cabins are on well and septic systems. <strong>DO NOT FLUSH anything other than toilet paper.</strong></p>
+      <h4>Aquatic Invasive Species (AIS)</h4>
+      <p>Under Minnesota law, watercraft must be properly decontaminated if coming from an AIS-affected water.</p>
+      <p style="margin-top:20px;padding:14px;background:#f0f7f5;border-radius:7px;font-weight:600;color:#1a5c6b;font-size:.85rem;">
+        By checking the agreement box and submitting payment, Guest acknowledges and accepts this Agreement and all Rental Rules.
+      </p>
+      <p style="margin-top:10px;font-size:.78rem;color:#aaa;">
+        Agreement Version: 2026-v1.0 · Questions? <a href="mailto:dgoehl@gmail.com">dgoehl@gmail.com</a>
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-accept" id="agreement-accept-btn">I've Read the Agreement</button>
     </div>
   </div>
+</div>
 
-  <!-- ── Footer ── -->
-  <footer class="family-footer footer" style="background:#2d1b69;">
-    <div class="footer-brand" style="color:#fff;">Sugar<span style="color:#c4b5fd;">Crest</span></div>
-    <p>Sugar Lake, Minnesota · Friends &amp; Family</p>
-    <p style="font-size:.75rem;margin-top:8px;">© 2026 SugarCrest LLC</p>
-  </footer>
+<div id="toast"></div>
 
-  <script src="js/calendar.js"></script>
-  <script src="js/booking.js"></script>
-  <script>
-    if (window.self !== window.top) document.body.classList.add('embedded');
+<script>
+'use strict';
 
-    // Show selected-dates row when something is picked
-    document.addEventListener('DOMContentLoaded', () => {
-      const grid = document.getElementById('family-dates-grid');
-      const selRow = document.getElementById('family-selected-dates-row');
-      grid?.addEventListener('click', (e) => {
-        const card = e.target.closest('.family-date-card');
-        if (card && selRow) selRow.classList.add('show');
-      });
+const STRIPE_PK     = 'pk_live_E3eE5XSpwy9lOoHfnL478nfU';
+const FAMILY_RATE   = 500;
+const AGREEMENT_VER = 'v1.0';
+
+/* ── Hardcoded family allocations (owner adds dates via admin) ── */
+const FAMILY_ALLOCATIONS = [];
+
+function parseDate(str) { const [y,m,d] = str.split('-').map(Number); return new Date(y, m-1, d); }
+function getNights(s, e) { return Math.round((parseDate(e) - parseDate(s)) / 86400000); }
+function fmtDate(str) {
+  if (!str) return '';
+  return parseDate(str).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+}
+function fmtRange(s, e) {
+  const sd = parseDate(s), ed = parseDate(e);
+  const opts = { month: 'short', day: 'numeric' };
+  if (sd.getFullYear() !== ed.getFullYear()) {
+    return `${sd.toLocaleDateString('en-US', {...opts, year:'numeric'})} – ${ed.toLocaleDateString('en-US', {...opts, year:'numeric'})}`;
+  }
+  return `${sd.toLocaleDateString('en-US', opts)} – ${ed.toLocaleDateString('en-US', {...opts, year:'numeric'})}`;
+}
+function generateConfirmationNumber() {
+  return 'SCF' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substr(2,3).toUpperCase();
+}
+
+let toastTimer;
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (type === 'success' ? ' success' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = '', 3500);
+}
+
+/* ── Modal ── */
+const modal = document.getElementById('agreement-modal');
+document.getElementById('open-agreement').addEventListener('click', e => {
+  e.preventDefault(); modal.classList.add('open'); document.body.style.overflow = 'hidden';
+});
+document.getElementById('agreement-close').addEventListener('click', () => {
+  modal.classList.remove('open'); document.body.style.overflow = '';
+});
+document.getElementById('agreement-accept-btn').addEventListener('click', () => {
+  modal.classList.remove('open'); document.body.style.overflow = '';
+  const cb = document.getElementById('family-agree-terms');
+  if (cb && !cb.checked) { cb.checked = true; cb.dispatchEvent(new Event('change')); }
+});
+modal.addEventListener('click', e => {
+  if (e.target === modal) { modal.classList.remove('open'); document.body.style.overflow = ''; }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && modal.classList.contains('open')) {
+    modal.classList.remove('open'); document.body.style.overflow = '';
+  }
+});
+
+/* ── Stripe ── */
+const stripe   = Stripe(STRIPE_PK);
+const elements = stripe.elements();
+const cardEl   = elements.create('card', {
+  style: {
+    base: { fontFamily: 'inherit', fontSize: '15px', color: '#1a1a1a', '::placeholder': { color: '#bbb' } },
+    invalid: { color: '#c0392b' }
+  }
+});
+cardEl.mount('#family-card-element');
+cardEl.on('change', e => {
+  document.getElementById('family-card-errors').textContent = e.error ? e.error.message : '';
+});
+cardEl.on('focus',  () => document.getElementById('stripe-wrap').classList.add('focused'));
+cardEl.on('blur',   () => document.getElementById('stripe-wrap').classList.remove('focused'));
+
+/* ── State ── */
+let selectedAllocation = null;
+
+/* ── Load dates ── */
+async function loadDates() {
+  const grid = document.getElementById('dates-grid');
+  let allocations = FAMILY_ALLOCATIONS;
+
+  // Also try fetching from admin API
+  try {
+    const res = await fetch('/.netlify/functions/get-bookings?type=family-allocations');
+    if (res.ok) {
+      const data = await res.json();
+      if (data.allocations && data.allocations.length) {
+        allocations = data.allocations;
+      }
+    }
+  } catch {}
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const future = allocations.filter(a => parseDate(a.startDate) >= today);
+
+  if (!future.length) {
+    grid.innerHTML = '<div class="no-dates">No dates are currently available. Contact Dave for upcoming availability.</div>';
+    return;
+  }
+
+  grid.innerHTML = future.map((a, i) => `
+    <div class="date-card" data-index="${i}" data-start="${a.startDate}" data-end="${a.endDate}">
+      <div class="dc-dates">${fmtRange(a.startDate, a.endDate)}</div>
+      <div class="dc-nights">${getNights(a.startDate, a.endDate)} nights · Check-in 4 PM</div>
+    </div>
+  `).join('');
+
+  grid.querySelectorAll('.date-card').forEach(card => {
+    card.addEventListener('click', () => {
+      grid.querySelectorAll('.date-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedAllocation = { startDate: card.dataset.start, endDate: card.dataset.end };
+      updateBtn();
     });
-  </script>
+  });
+}
+loadDates();
+
+/* ── Button state ── */
+const agreeCheck = document.getElementById('family-agree-terms');
+const payBtn     = document.getElementById('family-pay-btn');
+
+function updateBtn() {
+  const agreed  = agreeCheck.checked;
+  const hasDate = !!selectedAllocation;
+  payBtn.disabled = !(agreed && hasDate);
+  if (!hasDate && !agreed) {
+    payBtn.textContent = 'Select a date to continue';
+  } else if (!hasDate) {
+    payBtn.textContent = 'Select a date above to continue';
+  } else if (!agreed) {
+    payBtn.textContent = 'Please accept the rental agreement to continue';
+  } else {
+    payBtn.textContent = 'Pay $500 — Confirm Booking';
+  }
+}
+agreeCheck.addEventListener('change', updateBtn);
+
+/* ── Submit ── */
+document.getElementById('family-form').addEventListener('submit', async e => {
+  e.preventDefault();
+
+  if (!selectedAllocation) { showToast('Please select a date.', 'error'); return; }
+  if (!agreeCheck.checked) { showToast('You must accept the Rental Agreement to proceed.', 'error'); return; }
+
+  const name  = document.getElementById('family-name').value.trim();
+  const email = document.getElementById('family-email').value.trim();
+  const phone = document.getElementById('family-phone').value.trim();
+
+  if (!name || !email || !phone) {
+    showToast('Please fill in all required fields.', 'error'); return;
+  }
+
+  payBtn.disabled = true;
+  payBtn.innerHTML = '<div class="spinner"></div>&nbsp; Processing payment…';
+
+  const agreementTimestamp = new Date().toISOString();
+
+  try {
+    const bookingData = {
+      guestName:  name,
+      guestEmail: email,
+      guestPhone: phone,
+      guestCount: document.getElementById('family-guests').value,
+      message:    document.getElementById('family-message').value.trim(),
+      checkIn:    selectedAllocation.startDate,
+      checkOut:   selectedAllocation.endDate,
+      nights:     getNights(selectedAllocation.startDate, selectedAllocation.endDate),
+      type:       'family',
+      amountPaid: FAMILY_RATE,
+      agreement: { version: AGREEMENT_VER, acceptedAt: agreementTimestamp, guestName: name }
+    };
+
+    const intentRes = await fetch('/.netlify/functions/create-payment-intent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: FAMILY_RATE, booking: bookingData })
+    });
+    if (!intentRes.ok) {
+      const err = await intentRes.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to initialize payment.');
+    }
+    const { clientSecret } = await intentRes.json();
+
+    const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: {
+        card: cardEl,
+        billing_details: { name, email, phone }
+      }
+    });
+    if (stripeError) throw new Error(stripeError.message);
+
+    const confNumber = generateConfirmationNumber();
+    await fetch('/.netlify/functions/save-booking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...bookingData,
+        paymentIntentId:    paymentIntent.id,
+        confirmationNumber: confNumber,
+        createdAt:          new Date().toISOString()
+      })
+    });
+
+    // Inline success
+    document.getElementById('family-form').style.display = 'none';
+    const successMsg = document.getElementById('success-msg');
+    document.getElementById('success-detail').innerHTML =
+      `Confirmation sent to <strong>${email}</strong>.<br>See you ${fmtDate(selectedAllocation.startDate)}!`;
+    successMsg.style.display = 'block';
+
+  } catch (err) {
+    document.getElementById('family-card-errors').textContent = err.message;
+    showToast(err.message, 'error');
+    payBtn.disabled = false;
+    updateBtn();
+  }
+});
+</script>
 </body>
 </html>

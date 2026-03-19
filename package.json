@@ -6,7 +6,9 @@
     "build": "echo 'No build needed'"
   },
   "dependencies": {
-    "@netlify/blobs": "^8.1.0",
-    "stripe": "^17.7.0"
+    "@netlify/blobs": "^8.2.0",
+    "nodemailer": "^8.0.3",
+    "stripe": "^17.7.0",
+    "uuid": "^13.0.0"
   }
 }
